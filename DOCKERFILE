@@ -1,0 +1,31 @@
+# Get an appropriate version of JDK for WebGoat v8.2.0
+FROM adoptopenjdk:15-jdk
+
+# Update the image, and install maven
+RUN apt-get update &&\
+    apt-get -y install curl wget nodejs npm
+
+# Install python 3.8
+RUN apt install software-properties-common -y
+RUN add-apt-repository ppa:deadsnakes/ppa
+RUN apt install python3.8 -y
+
+# Create a local user to avoid using only root
+RUN groupadd -r sl && useradd -r -g sl -m -d /home/sl sl
+
+# Grab ShiftLeft's agent, and post it into all users' paths
+ADD https://cdn.shiftleft.io/download/sl /home/sl/sl
+RUN chmod a+rx /home/sl/sl
+
+# Set all other files added to be placed in local user's dir
+USER sl
+WORKDIR /home/sl
+
+# Make python 3.7 the default
+RUN echo "alias python=python3.8" >> ~/.bashrc
+RUN export PATH=${PATH}:/usr/bin/python3.8
+
+# This is where we will mount the repo
+VOLUME /home/sl/work
+
+ENV PATH=$PATH:/home/sl 
