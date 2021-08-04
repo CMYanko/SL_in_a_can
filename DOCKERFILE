@@ -1,31 +1,42 @@
 # Get an appropriate version of JDK for WebGoat v8.2.0
-FROM adoptopenjdk:15-jdk
+FROM ubuntu:focal
+LABEL maintainer="Curtis Yanko <cyanko@shiftleft.io>"
 
-# Update the image, and install maven
-RUN apt-get update &&\
-    apt-get -y install curl wget nodejs npm
+
+# Update the image, and install tools
+RUN apt-get update
+RUN DEBIAN_FRONTEND="noninteractive" apt-get -y install tzdata
+RUN apt-get -y install curl nano wget nodejs npm maven mc locales git libc6 &&\
+    adduser --quiet --disabled-password --shell /bin/zsh --home /home/devuser --gecos "User" devuser &&\
+    echo "devuser:<a href="mailto://p@sswoord1">p@ssword1</a>" | chpasswd &&\
+    usermod -G sudo devuser
+
+RUN apt-get -y install zsh
 
 # Install python 3.8
 RUN apt install software-properties-common -y
 RUN add-apt-repository ppa:deadsnakes/ppa
-RUN apt install python3.8 -y
-
-# Create a local user to avoid using only root
-RUN groupadd -r sl && useradd -r -g sl -m -d /home/sl sl
+RUN apt -y install python3.8 python3-pip
+RUN pip3 install powerline-status
+RUN apt-get -y install fonts-powerline
 
 # Grab ShiftLeft's agent, and post it into all users' paths
-ADD https://cdn.shiftleft.io/download/sl /home/sl/sl
-RUN chmod a+rx /home/sl/sl
+ADD https://cdn.shiftleft.io/download/sl /home/devuser/sl
+RUN chown -R devuser:devuser /home/devuser/sl
+RUN chmod a+rx /home/devuser/sl
 
 # Set all other files added to be placed in local user's dir
-USER sl
-WORKDIR /home/sl
+USER devuser
+RUN mkdir /home/devuser/work &&\
+    mkdir /home/devuser/.shiftleft &&\
+    mkdir /home/devuser/.shiftleft/logs
+WORKDIR /home/devuser/work
 
-# Make python 3.7 the default
+# Make python 3.8 the default
 RUN echo "alias python=python3.8" >> ~/.bashrc
 RUN export PATH=${PATH}:/usr/bin/python3.8
 
-# This is where we will mount the repo
-VOLUME /home/sl/work
+ENV TERM xterm
+ENV PATH=$PATH:/home/devuser
 
-ENV PATH=$PATH:/home/sl 
+CMD ["zsh"]
