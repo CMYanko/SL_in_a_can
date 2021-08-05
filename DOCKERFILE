@@ -7,7 +7,7 @@ ENV TERM xterm
 RUN apt-get update
 RUN DEBIAN_FRONTEND="noninteractive" apt-get -y install jq curl nano wget nodejs npm maven mc zip unzip git \
     python3.8 python3-setuptools python3-pip && rm -rf /var/lib/apt/lists/*
-RUN adduser --quiet --disabled-password --shell /bin/zsh --home /home/devuser --gecos "User" devuser &&\
+RUN adduser --quiet --disabled-password --shell /bin/bash --home /home/devuser --gecos "User" devuser &&\
     echo "devuser:<a href="mailto://p@sswoord1">p@ssword1</a>" | chpasswd &&\
     usermod -G sudo devuser
 
