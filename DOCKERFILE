@@ -1,29 +1,30 @@
 # Get an appropriate version of JDK for WebGoat v8.2.0
-FROM ubuntu:focal
+FROM --platform=amd64 ubuntu:focal
 LABEL maintainer="Curtis Yanko <cyanko@shiftleft.io>"
-
+ENV TERM xterm
 
 # Update the image, and install tools
 RUN apt-get update
-RUN DEBIAN_FRONTEND="noninteractive" apt-get -y install tzdata
-RUN apt-get -y install curl nano wget nodejs npm maven mc locales git libc6 &&\
-    adduser --quiet --disabled-password --shell /bin/zsh --home /home/devuser --gecos "User" devuser &&\
+RUN DEBIAN_FRONTEND="noninteractive" apt-get -y install jq curl nano wget nodejs npm maven mc zip unzip git \
+    python3.8 python3-setuptools python3-pip && rm -rf /var/lib/apt/lists/*
+RUN adduser --quiet --disabled-password --shell /bin/zsh --home /home/devuser --gecos "User" devuser &&\
     echo "devuser:<a href="mailto://p@sswoord1">p@ssword1</a>" | chpasswd &&\
     usermod -G sudo devuser
 
-RUN apt-get -y install zsh
 
 # Install python 3.8
-RUN apt install software-properties-common -y
-RUN add-apt-repository ppa:deadsnakes/ppa
-RUN apt -y install python3.8 python3-pip
-RUN pip3 install powerline-status
-RUN apt-get -y install fonts-powerline
+#RUN apt install software-properties-common -y
+#RUN add-apt-repository ppa:deadsnakes/ppa
+#RUN apt -y install python3.8 python3-setup
+#RUN pip3 install powerline-status
+#RUN apt-get -y install fonts-powerline
 
 # Grab ShiftLeft's agent, and post it into all users' paths
 ADD https://cdn.shiftleft.io/download/sl /home/devuser/sl
 RUN chown -R devuser:devuser /home/devuser/sl
 RUN chmod a+rx /home/devuser/sl
+RUN /home/devuser/sl update jre && /home/devuser/sl update js2cpg && /home/devuser/sl update java2cpg && /home/devuser/sl update py2cpg
+RUN python3 -m pip install --no-cache-dir install shiftleft-scan-reports
 
 # Set all other files added to be placed in local user's dir
 USER devuser
@@ -36,7 +37,7 @@ WORKDIR /home/devuser/work
 RUN echo "alias python=python3.8" >> ~/.bashrc
 RUN export PATH=${PATH}:/usr/bin/python3.8
 
-ENV TERM xterm
 ENV PATH=$PATH:/home/devuser
 
-CMD ["zsh"]
+CMD ["bash"]
+
