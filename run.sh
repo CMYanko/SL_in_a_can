@@ -1,1 +1,1 @@
-docker run --rm -it slinacan 
+docker run -it --rm  -v "$(pwd)":/home/devuser/work -v "$(pwd)":/home/devuser/.shiftleft/log  slinacan:sl

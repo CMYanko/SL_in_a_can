@@ -1,7 +1,6 @@
 # Get an appropriate version of JDK for WebGoat v8.2.0
 FROM --platform=amd64 ubuntu:focal
 LABEL maintainer="Curtis Yanko <cyanko@shiftleft.io>"
-ENV TERM xterm
 
 # Update the image, and install tools
 RUN apt-get update
@@ -37,7 +36,7 @@ WORKDIR /home/devuser/work
 RUN echo "alias python=python3.8" >> ~/.bashrc
 RUN export PATH=${PATH}:/usr/bin/python3.8
 
+ENV TERM xterm
 ENV PATH=$PATH:/home/devuser
 
 CMD ["bash"]
-

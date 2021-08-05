@@ -1,1 +1,1 @@
-docker build --rm -f Dockerfile -t slinacan .
+docker build --rm -f Dockerfile -t slinacan:latest .
