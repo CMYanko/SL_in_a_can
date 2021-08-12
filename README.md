@@ -13,7 +13,7 @@ Here is what it gives me,
 1. Ensure you have docker installed and running
 2. Clone this repo
 3. Open terminal and run, `chmod +x build.sh`
-5. Run `./build.sh`
+4. Run `./build.sh`
 
 Easy! This should give you a linux prompt for a user called "devuser" with password "p@ssword1". This user is a sudoer.
 
@@ -27,4 +27,3 @@ Easy! This should give you a linux prompt for a user called "devuser" with passw
 1. chmod the run.sh file
     a) note that the run command mounts the current folder into ~/work
     b) It also will put the sl.log in the current folder
-
